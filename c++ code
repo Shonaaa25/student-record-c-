@@ -1,0 +1,123 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct StuRecord {
+    string qualification;
+    int frequency;
+    StuRecord(const string& qual, int freq) : qualification(qual), frequency(freq) {}
+};
+
+struct Node {
+    StuRecord* data;
+    Node* next;
+
+    Node(StuRecord* record) : data(record), next(nullptr) {}
+};
+
+class attendance {
+private:
+    Node* top;
+    int attendanceSize;
+
+public:
+    attendance() : top(nullptr), attendanceSize(0) {}
+
+    void push(StuRecord* record) {
+        Node* newNode = new Node(record);
+        newNode->next = top;
+        top = newNode;
+        attendanceSize++;
+    }
+
+    void pop() {
+        if (!isEmpty()) {
+            Node* temp = top;
+            top = top->next;
+            delete temp;
+            attendanceSize--;
+        }
+    }
+
+    StuRecord* peek() {
+        if (!isEmpty()) {
+            return top->data;
+        }
+        return nullptr;
+    }
+
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    int size() {
+        return attendanceSize;
+    }
+};
+
+int main() {
+    attendance totalAttendace;
+
+    int choice;
+    string qual;
+    int freq;
+
+    while (true) {
+        cout << "Choose an action:\n";
+        cout << "1. Add new student(s) to the the class\n";
+        cout << "2. Remove student(s) from the class\n";
+        cout << "3. View the attendance in the class\n";
+        cout << "4. Check if the class is empty\n";
+        cout << "5. Number of Qualications (classes) \n";
+        cout << "6. Quit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter qualification: ";
+                cin.ignore(); // Clear the newline character from the previous input
+                getline(cin, qual);
+                cout << "Enter number: ";
+                cin >> freq;
+                totalAttendace.push(new StuRecord(qual, freq));
+                cout << "Item added to the class.\n";
+                break;
+            case 2:
+                if (!totalAttendace.isEmpty()) {
+                    totalAttendace.pop();
+                    cout << "Item removed from the class.\n";
+                } else {
+                    cout << "class is empty. Cannot remove.\n";
+                }
+                break;
+            case 3:
+                if (!totalAttendace.isEmpty()) {
+                    StuRecord* topRecord = totalAttendace.peek();
+                    cout << "The class has: " << topRecord->qualification << " (" << topRecord->frequency << " students)\n";
+                } else {
+                    cout << "The class is empty.\n";
+                }
+                break;
+            case 4:
+                if (totalAttendace.isEmpty()) {
+                    cout << "The class is empty.\n";
+                } else {
+                    cout << "The class is not empty.\n";
+                }
+                break;
+            case 5:
+                cout << "Number of qualifications: " << totalAttendace.size() << "\n";
+                break;
+            case 6:
+                cout << "Exiting the program.\n";
+                return 0;
+            default:
+                cout << "Invalid choice. Please enter a valid option.\n";
+                break;
+        }
+    }
+
+    return 0;
+}
